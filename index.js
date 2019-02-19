@@ -3,6 +3,7 @@ const app = express()
 const port = 3010
 const fileUpload = require("express-fileupload")
 const bodyParser = require('body-parser')
+const requestIp = require('request-ip');
 const cors = require('cors')
 
 app.use(cors({
@@ -41,7 +42,15 @@ function query(sql) {
     });
 }
 
-function query(table,object) {
+function get_ip_address(req) {
+    let ip = requestIp.getClientIp(req)
+    if(ip.includes(":")){
+        ip = "localhost"
+    }
+    return ip
+}
+
+function queryInsertObject(table,object) {
     return new Promise(function (resolve, reject) {
         connection.query('INSERT INTO '+table+' SET ?',object, function (e, r, f) {
             if (e) {
@@ -55,6 +64,11 @@ function query(table,object) {
     });
 }
 
+app.get('/getSession', (req, res) => {
+    let ip = get_ip_address(req)
+    console.log(ip)
+    res.json(ip)
+})
 
 app.get('/register', (req, res) => {
     res.json(true)
