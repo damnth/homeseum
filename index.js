@@ -18,6 +18,43 @@ app.use(fileUpload({
     limits: {fileSize: 50 * 1024 * 1024},
 }));
 
+let mysql = require('mysql')
+let connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'homeseum',
+    multipleStatements: true
+})
+
+function query(sql) {
+    return new Promise(function (resolve, reject) {
+        connection.query(sql, function (e, r, f) {
+            if (e) {
+                console.log(e);
+                resolve(false);
+            }
+            else {
+                resolve(r);
+            }
+        });
+    });
+}
+
+function query(table,object) {
+    return new Promise(function (resolve, reject) {
+        connection.query('INSERT INTO '+table+' SET ?',object, function (e, r, f) {
+            if (e) {
+                console.log(e);
+                resolve(false);
+            }
+            else {
+                resolve(r);
+            }
+        });
+    });
+}
+
 
 app.get('/register', (req, res) => {
     res.json(true)
